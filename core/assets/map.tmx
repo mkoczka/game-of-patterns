@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="129" tileheight="129" infinite="0" nextobjectid="21">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="466" source="tileset.tsx"/>
+ <layer name="Grass" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,70,70,70,70,70,70,70,70,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup name="WallObject">
+  <object id="17" x="0" y="1209.6" width="1287.95" height="83.2517"/>
+  <object id="18" x="0" y="0" width="68.5602" height="1292.85"/>
+  <object id="19" x="4.89716" y="0" width="1278.16" height="93.046"/>
+  <object id="20" x="1190.01" y="9.79432" width="97.9432" height="1268.36"/>
+ </objectgroup>
+ <layer name="Wall" width="10" height="10">
+  <data encoding="csv">
+39,8,8,8,8,8,8,8,8,441,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+318,0,0,0,0,0,0,0,0,256,
+163,132,132,132,132,132,132,132,132,101
+</data>
+ </layer>
+</map>
