@@ -13,14 +13,18 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.koczka.gameofpatterns.character.Enemy;
+import com.koczka.gameofpatterns.character.Player;
+import com.koczka.gameofpatterns.character.SoldierCharacterFactory;
 
 public class GameOfPatterns extends ApplicationAdapter {
 
-    static final int PPM = 1;
+    public static final int PPM = 32;
 
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -28,15 +32,22 @@ public class GameOfPatterns extends ApplicationAdapter {
     private TiledMap map;
     private TiledMapRenderer renderer;
     private BitmapFont font;
-    private OrthoCamController cameraController;
     private World world;
     private Box2DDebugRenderer debugRenderer;
 
     private Player player;
     private Enemy enemy;
 
+    private Array<Entity> activeEntities;
+    private Array<Entity> destroyEntities;
+
+    private Array<Enemy> enemies;
+
     @Override
     public void create() {
+        activeEntities = new Array<Entity>();
+        destroyEntities = new Array<Entity>();
+        enemies = new Array<Enemy>();
 
         world = new World(new Vector2(0, 0), true);
         debugRenderer = new Box2DDebugRenderer();
@@ -48,16 +59,18 @@ public class GameOfPatterns extends ApplicationAdapter {
         batch = new SpriteBatch();
 
         map = new TmxMapLoader().load("map.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map, 1f / PPM);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, (w / h) * 320, 320);
-        camera.translate(220, 180);
-        camera.zoom = 2;
+        camera.zoom = 1f / PPM * 2;
+        camera.translate(camera.viewportWidth / 2 * - (1f - camera.zoom), camera.viewportHeight / 2 * - (1f - camera.zoom));
         camera.update();
 
-        cameraController = new OrthoCamController(camera);
-        Gdx.input.setInputProcessor(cameraController);
+        player = SoldierCharacterFactory.makePlayer(world, this);
+        this.enemies.add(SoldierCharacterFactory.makeEnemy(world, this));
+
+        world.setContactListener(new EnemyBulletCollision(player, this));
 
         MapLayer layer = map.getLayers().get("WallObject");
         for (MapObject object : layer.getObjects()) {
@@ -75,9 +88,6 @@ public class GameOfPatterns extends ApplicationAdapter {
             body.createFixture(polygonShape, 1);
             polygonShape.dispose();
         }
-
-        player = new Player(48, 64, 300, 200, world);
-        enemy = new Enemy(48, 64, 400, 200, world);
     }
 
     private void updatePositions() {
@@ -85,10 +95,11 @@ public class GameOfPatterns extends ApplicationAdapter {
         world.getBodies(bodies);
 
         for (Body b : bodies) {
-            Character e = (Character) b.getUserData();
+            Entity e = (Entity) b.getUserData();
 
             if (e != null) {
                 e.setPosition(b.getPosition().x, b.getPosition().y);
+                e.setRotation(MathUtils.radiansToDegrees * b.getAngle());
             }
         }
     }
@@ -104,15 +115,35 @@ public class GameOfPatterns extends ApplicationAdapter {
         updatePositions();
 
         batch.begin();
-        batch.draw(player.texture, player.x * 0.75f - player.width * 0.5f, player.y * 0.75f - player.height * 0.5f);
-        batch.draw(enemy.texture, enemy.x * 0.75f - enemy.width * 0.5f, enemy.y * 0.75f - enemy.height * 0.5f);
+        font.draw(batch, "Score: " + GameState.getInstance().getScore(), 80, 450);
+        font.draw(batch, "Pohyb: W,S,A,D   Strelba: SPACE", 300, 470);
+        font.draw(batch, "Zbrane strielajú diagonalne podla polohy mysi", 300, 440);
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
+        player.render(batch);
+
+        for (Enemy enemy : enemies) {
+            enemy.render(batch);
+        }
+
         batch.end();
 
-        player.render();
-        enemy.render();
-
-        debugRenderer.render(world, camera.combined);
+//        debugRenderer.render(world, camera.combined);
         world.step(1 / 60f, 6, 2);
+
+        for (Entity entity : destroyEntities) {
+            world.destroyBody(entity.getBody());
+        }
+        destroyEntities.clear();
+    }
+
+    public void enemyDead() {
+        enemies.add(SoldierCharacterFactory.makeEnemy(world, this));
+    }
+
+    public void destroy(Entity entity) {
+        if (!destroyEntities.contains(entity, true)) {
+            destroyEntities.add(entity);
+            activeEntities.removeValue(entity, true);
+        }
     }
 }
