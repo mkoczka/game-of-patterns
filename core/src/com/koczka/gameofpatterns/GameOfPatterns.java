@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.koczka.gameofpatterns.character.Enemy;
 import com.koczka.gameofpatterns.character.Player;
 import com.koczka.gameofpatterns.character.SoldierCharacterFactory;
+import com.koczka.gameofpatterns.weather.WeatherManagement;
 
 public class GameOfPatterns extends ApplicationAdapter {
 
@@ -42,6 +43,9 @@ public class GameOfPatterns extends ApplicationAdapter {
     private Array<Entity> destroyEntities;
 
     private Array<Enemy> enemies;
+
+    private long startTime = System.currentTimeMillis();
+    private long endTime;
 
     @Override
     public void create() {
@@ -71,6 +75,8 @@ public class GameOfPatterns extends ApplicationAdapter {
         this.enemies.add(SoldierCharacterFactory.makeEnemy(world, this));
 
         world.setContactListener(new EnemyBulletCollision(player, this));
+
+        new WeatherManagement();
 
         MapLayer layer = map.getLayers().get("WallObject");
         for (MapObject object : layer.getObjects()) {
@@ -106,8 +112,19 @@ public class GameOfPatterns extends ApplicationAdapter {
 
     @Override
     public void render() {
+
         Gdx.gl.glClearColor(100f / 255f, 100f / 255f, 250f / 255f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (GameState.getInstance().getScore() >= 10) {
+            batch.begin();
+            font.draw(batch, "Vyhrali ste v case: " + ((endTime - startTime) / 1000.0f) + " s", 200, 250);
+            batch.end();
+            return;
+        }
+
+        this.endTime = System.currentTimeMillis();
+
         camera.update();
         renderer.setView(camera);
         renderer.render();
@@ -115,9 +132,12 @@ public class GameOfPatterns extends ApplicationAdapter {
         updatePositions();
 
         batch.begin();
-        font.draw(batch, "Score: " + GameState.getInstance().getScore(), 80, 450);
-        font.draw(batch, "Pohyb: W,S,A,D   Strelba: SPACE", 300, 470);
-        font.draw(batch, "Zbrane strielajú diagonalne podla polohy mysi", 300, 440);
+        font.draw(batch, "Skore: " + GameState.getInstance().getScore(), 80, 470);
+        font.draw(batch, "Pocasie: " + GameState.getInstance().getWeather(), 80, 440);
+        font.draw(batch, "Zbran: " + player.getGun().getClass().getSimpleName(), 80, 410);
+
+        font.draw(batch, "Pohyb: W,S,A,D   Strelba: SPACE   Prepnutie zbrane: Q", 250, 470);
+        font.draw(batch, "Zbrane strielajú diagonalne podla polohy mysi", 250, 440);
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 20);
         player.render(batch);
 

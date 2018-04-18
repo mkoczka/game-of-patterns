@@ -2,15 +2,18 @@ package com.koczka.gameofpatterns.gun;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.koczka.gameofpatterns.GameOfPatterns;
 
 abstract public class Gun {
 
-    World world;
+    protected World world;
 
-    float bulletLifetime;
+    protected float bulletLifetime;
 
-    float bulletSpeed;
+    protected float bulletSpeed;
+
+    protected Array<Bullet> bullets = new Array<Bullet>();
 
     public float reloadTime;
 

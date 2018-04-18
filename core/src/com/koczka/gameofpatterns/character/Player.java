@@ -7,39 +7,29 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.koczka.gameofpatterns.GameOfPatterns;
+import com.koczka.gameofpatterns.gun.GrenadeLauncher;
 import com.koczka.gameofpatterns.gun.Gun;
+import com.koczka.gameofpatterns.gun.Shotgun;
 import com.koczka.gameofpatterns.weather.Weather;
 
 public class Player extends Character {
 
-    public float width;
-    public float height;
-    public float angle;
+    private Sprite sprite;
 
-    public float x;
-    public float y;
+    private Gun gun;
 
-    public Texture texture;
-    Sprite sprite;
+    private GameOfPatterns game;
 
-    private World world;
-    public Body body;
-
-    Gun gun;
-
-    GameOfPatterns game;
-
-    private int playerVelocity = 5;
-
-    long lastShot = System.currentTimeMillis();
+    private long lastShot = System.currentTimeMillis();
 
     Player(float width, float height, float x, float y, World world, GameOfPatterns game, Gun gun) {
         this.width = width;
         this.height = height;
         this.world = world;
         this.game = game;
+
+        this.playerVelocity = 5;
 
         this.gun = gun;
 
@@ -82,6 +72,10 @@ public class Player extends Character {
         return this.body;
     }
 
+    public Gun getGun() {
+        return this.gun;
+    }
+
     private void move() {
         float xVel = 0;
         float yVel = 0;
@@ -105,6 +99,13 @@ public class Player extends Character {
     }
 
     private void shoot() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            if (this.gun instanceof GrenadeLauncher) {
+                this.gun = new Shotgun(world);
+            } else {
+                this.gun = new GrenadeLauncher(world);
+            }
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && System.currentTimeMillis() - lastShot > this.gun.reloadTime) {
             lastShot = System.currentTimeMillis();
             this.gun.shoot(this.x, this.y, this.game);
@@ -123,7 +124,8 @@ public class Player extends Character {
         this.gun.render(batch);
     }
 
-    public void setVelocityByWeather(Weather weather) {
+    @Override
+    public void updateWeather(Weather weather) {
         if (weather == Weather.RAIN) {
             this.playerVelocity = 4;
         }
@@ -134,5 +136,4 @@ public class Player extends Character {
             this.playerVelocity = 5;
         }
     }
-
 }

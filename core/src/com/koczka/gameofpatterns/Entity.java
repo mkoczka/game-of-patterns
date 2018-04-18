@@ -1,19 +1,26 @@
 package com.koczka.gameofpatterns;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Entity {
 
-    float x;
+    protected float x;
 
-    float y;
+    protected float y;
 
-    float angle;
+    protected float width;
 
-    public World world;
+    protected float height;
 
-    public Body body;
+    protected float angle;
+
+    protected World world;
+
+    protected Body body;
+
+    protected Texture texture;
 
     public abstract void setPosition(float x, float y);
 

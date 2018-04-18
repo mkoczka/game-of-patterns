@@ -9,38 +9,29 @@ import com.koczka.gameofpatterns.weather.Weather;
 
 public class Enemy extends Character {
 
-    public float width;
-    public float height;
-    float angle;
-
-    public float x;
-    public float y;
-
-    Texture texture;
-
-    private World world;
     private GameOfPatterns game;
-    public Body body;
-    private Fixture fixture;
 
-    int health = 2;
+    private int health = 2;
 
-    private int playerVelocity = 3;
+    private long lastTurn = System.currentTimeMillis();
 
-    long lastTurn = System.currentTimeMillis();
-    double randomX;
-    double randomY;
+    private double randomX;
 
-    public boolean destroy = false;
+    private double randomY;
+
+    private boolean destroy = false;
 
     Enemy(float width, float height, float x, float y, World world, GameOfPatterns game) {
         this.width = width;
         this.height = height;
+
+        this.playerVelocity = 3;
+
         this.world = world;
         this.game = game;
         this.setPosition(x / GameOfPatterns.PPM, y / GameOfPatterns.PPM);
 
-        texture = new Texture(Gdx.files.internal("hero.png"));
+        texture = new Texture(Gdx.files.internal("enemy.png"));
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -58,7 +49,7 @@ public class Enemy extends Character {
         fixtureDef.friction = 0.4f;
         fixtureDef.restitution = 0.6f;
 
-        this.fixture = body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef);
 
         shape.dispose();
     }
@@ -130,7 +121,8 @@ public class Enemy extends Character {
         }
     }
 
-    public void setVelocityByWeather(Weather weather) {
+    @Override
+    public void updateWeather(Weather weather) {
         if (weather == Weather.RAIN) {
             this.playerVelocity = 2;
         }
@@ -141,5 +133,4 @@ public class Enemy extends Character {
             this.playerVelocity = 3;
         }
     }
-
 }

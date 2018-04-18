@@ -1,18 +1,10 @@
 package com.koczka.gameofpatterns.character;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.koczka.gameofpatterns.Entity;
+import com.koczka.gameofpatterns.weather.WeatherObserver;
 
-public abstract class Character extends Entity {
+public abstract class Character extends Entity implements WeatherObserver {
 
-    float width;
-    float height;
-
-    float angle;
-
-    float x;
-    float y;
-
-    Texture texture;
+    protected int playerVelocity;
 
 }

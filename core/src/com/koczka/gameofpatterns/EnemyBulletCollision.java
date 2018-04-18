@@ -1,13 +1,12 @@
 package com.koczka.gameofpatterns;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.koczka.gameofpatterns.gun.Bullet;
 import com.koczka.gameofpatterns.character.Enemy;
 import com.koczka.gameofpatterns.character.Player;
+import com.koczka.gameofpatterns.gun.Bullet;
 
 public class EnemyBulletCollision implements ContactListener {
 

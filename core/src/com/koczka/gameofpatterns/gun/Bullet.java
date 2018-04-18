@@ -11,29 +11,19 @@ import com.koczka.gameofpatterns.GameOfPatterns;
 
 public class Bullet extends Entity {
 
-    float width;
-    float height;
-
-    float angle;
-
-    float x;
-    float y;
-
-    public Texture texture;
     private Sprite sprite;
 
-    World world;
-    GameOfPatterns game;
-
-    Body body;
+    private GameOfPatterns game;
 
     private long bulletStartTime = System.currentTimeMillis();
+
     private float bulletLifetime;
+
     private float bulletSpeed;
 
     private boolean destroy = false;
 
-    Bullet(float x, float y, float bulletLifetime, float bulletSpeed, World world, GameOfPatterns game) {
+    Bullet(float x, float y, float bulletLifetime, float bulletSpeed, World world, GameOfPatterns game, String color) {
         this.width = 7;
         this.height = 31;
 
@@ -68,7 +58,7 @@ public class Bullet extends Entity {
             bulletX = -100;
         }
 
-        texture = new Texture(Gdx.files.internal("bullet.png"));
+        texture = new Texture(Gdx.files.internal("bullet-" + color + ".png"));
         this.sprite = new Sprite(texture, 7, 31);
 
         BodyDef bodyDef = new BodyDef();
@@ -108,7 +98,7 @@ public class Bullet extends Entity {
         shape.dispose();
     }
 
-    void bulletDistanceTimer() {
+    private void bulletDistanceTimer() {
         if (!this.destroy && System.currentTimeMillis() - bulletStartTime > this.bulletLifetime * 1000) {
             this.destroy = true;
             this.game.destroy(this);
@@ -131,7 +121,7 @@ public class Bullet extends Entity {
         return this.body;
     }
 
-    void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch) {
         if (!this.destroy) {
             sprite.setSize(this.width, this.height);
             sprite.setPosition((this.x * 24 - this.width * 0.5f), (this.y * 24 - this.height * 0.5f));

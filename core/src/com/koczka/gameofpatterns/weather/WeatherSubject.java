@@ -23,7 +23,7 @@ public class WeatherSubject {
 
     public void notifyAllObservers(){
         for (WeatherObserver observer : observers) {
-            observer.update();
+            observer.updateWeather(this.state);
         }
     }
 }
